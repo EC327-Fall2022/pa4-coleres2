@@ -5,8 +5,8 @@ Model::Model() { //constructr
     //object_ptrs[10] = new GameObject[10];
     center_ptrs.push_back(new PokemonCenter(1, 1.0, 100, Point2D(1, 20))); //creates GameObject in heap
     center_ptrs.push_back(new PokemonCenter(2, 2, 200, Point2D(10, 20)));
-    trainer_ptrs.push_back(new Trainer("Ash", 1, 'T', 2, Point2D(5,1)));
-    trainer_ptrs.push_back(new Trainer("Misty", 2, 'T', 2, Point2D(10,1)));
+    trainer_ptrs.push_back(new Trainer("Ash", 1, 'T', 20, Point2D(5,1)));
+    trainer_ptrs.push_back(new Trainer("Misty", 2, 'T', 20, Point2D(10,1)));
     gym_ptrs.push_back(new PokemonGym(10, 1, 2, 3, 1, Point2D()));
     gym_ptrs.push_back(new PokemonGym(20, 5, 7.5, 4, 2, Point2D(5, 5)));
     wildpokemon_ptrs.push_back(new WildPokemon("Charizard",5, 4, false, 1, Point2D(10,12)));
@@ -125,7 +125,7 @@ void Model::NewObject(char type, int id, double x, double y) {
     //add try catch to see id ,x,y are not taken
     switch(toupper(type)) {
             case 'T':
-                trainer_ptrs.emplace_back(new Trainer("Ash2", id, 'T', 2, Point2D(x,y)));
+                trainer_ptrs.emplace_back(new Trainer("Ash2", id, 'T', 20, Point2D(x,y)));
                 object_ptrs.push_back(trainer_ptrs.back()); //currently puts it at the back which shouldnt matter? but may need to change
                 active_ptrs.push_back(trainer_ptrs.back());
                 break;
