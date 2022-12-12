@@ -7,7 +7,6 @@
 #include "View.h"
 #include "WildPokemon.h"
 #include <list>
-const int AMNT_OBJS = 8;
 
 class Model {
     private:

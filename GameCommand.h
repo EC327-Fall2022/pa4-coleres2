@@ -3,6 +3,8 @@
 #include <iostream>
 #include "Model.h"
 #include "Input_Handling.h"
+#include<ios> 
+#include<limits> 
 
 void DoMoveCommand(Model&, int, Point2D);
 void DoMoveToCenterCommand(Model &, int, int);

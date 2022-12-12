@@ -27,11 +27,11 @@ void View::Plot(GameObject * ptr) { //changes grid value for each GameObject
         grid[x][y][0] = '*';
         grid[x][y][1] = ' ';
     }
-    if(!ptr->ShouldBeVisible()) { //turns fainted trainers invis
-        grid[x][y][0] = '.';
-        grid[x][y][1] = ' ';
+    // if(!ptr->ShouldBeVisible()) { //removing since we now have active_ptrs
+    //     grid[x][y][0] = '.';
+    //     grid[x][y][1] = ' ';
+    // }
     }
-}
 }
 
 void View::Draw() {

@@ -17,6 +17,15 @@ WildPokemon::WildPokemon(string name, double attack, double health, bool variant
     this->startingLoc = in_loc;
     speed = 3;
 }
+
+bool WildPokemon::takeDamage(double damage) {
+    this -> health -= damage;
+    if (health <= 0) {
+        return true;
+    }
+    return false;
+}
+
 void WildPokemon::follow(Trainer* t) { //need to update trainer information aswell
     current_trainer = t;
     state = IN_TRAINER;
@@ -24,6 +33,22 @@ void WildPokemon::follow(Trainer* t) { //need to update trainer information aswe
 }
 bool WildPokemon::get_variant() {
     return variant; 
+}
+void WildPokemon::AttackTrainer(Trainer* t) {
+    double damageTaken = t->GetExperience()*0.25 + 1.0;
+    cout << t->GetDisplayCode()  << t->GetId() << ": dealt " << damageTaken << " to " << this->GetDisplayCode() << this->GetId() << endl;
+    cout << t->GetDisplayCode()  << t->GetId() << ": took " << this->attack << " from " << this->GetDisplayCode() << this->GetId() << endl;
+    this->health -= damageTaken;
+    t->loseHealth(attack);
+    if(this->health <= 0) {
+        state = DEAD;
+        cout << t->GetDisplayCode()  << t->GetId() << ": has defeated " << this->GetDisplayCode() << this->GetId() << endl;
+        t->addExperience();
+        cout << t->GetDisplayCode()  << t->GetId() << ": has gained 5 exp ";
+    }
+    if(t->HasFainted()) {
+        cout << this-> name << " has defeated " << t->GetDisplayCode()  << t->GetId(); 
+    }
 }
 double WildPokemon::get_attack() {
     return attack;
@@ -50,6 +75,7 @@ bool WildPokemon::Update() {
     switch (state)
     {
     case IN_ENVIRONMENT:
+        {
         Vector2D dist = destination - location;
         dist.x = fabs(dist.x);
         dist.y = fabs(dist.y);
@@ -60,15 +86,21 @@ bool WildPokemon::Update() {
         else {
             location = location + delta;
         }
-        
+        return false;
         break;
+        }
     case DEAD:
+        return false;
         break;
     case IN_TRAINER:
-        if(current_trainer->GetState() == IN_GYM || current_trainer->GetState() == AT_CENTER) {
+        in_combat = true;
+        AttackTrainer(current_trainer);
+        if(current_trainer->GetState() == IN_GYM || current_trainer->GetState() == AT_CENTER || current_trainer->getHealth() <= 0) {
             state = IN_ENVIRONMENT;
             destination = startingLoc;
             delta = (destination - this->location) / (GetDistanceBetween(destination, this->location));
+            in_combat = false;
+            return true;
             break;
         }
         else{
@@ -76,9 +108,12 @@ bool WildPokemon::Update() {
         }
         location = location + delta;
         
+        return false;
+        break;
     default:
         break;
     }
+    return false;
 }
 
 
@@ -98,6 +133,7 @@ void WildPokemon::ShowStatus() {
         cout <<"The WildPokemon is dead" << endl;
     case IN_TRAINER:
         cout << "The WildPokemon is following " << current_trainer->GetName() << endl;
+        cout << " has " << health << " health" << endl;
     default:
         break;
     }

@@ -125,24 +125,24 @@ void Model::NewObject(char type, int id, double x, double y) {
     //add try catch to see id ,x,y are not taken
     switch(toupper(type)) {
             case 'T':
-                trainer_ptrs.emplace_back(new Trainer("Ash", id, 'T', 2, Point2D(x,y)));
+                trainer_ptrs.emplace_back(new Trainer("Ash2", id, 'T', 2, Point2D(x,y)));
                 object_ptrs.push_back(trainer_ptrs.back()); //currently puts it at the back which shouldnt matter? but may need to change
                 active_ptrs.push_back(trainer_ptrs.back());
                 break;
             case 'C':
                 center_ptrs.emplace_back(new PokemonCenter(id, 2, 150, Point2D(x, y)));
-                object_ptrs.push_back(center_ptrs.back());
-                active_ptrs.push_back(center_ptrs.back());
+                object_ptrs.emplace_back(center_ptrs.back());
+                active_ptrs.emplace_back(center_ptrs.back());
                 break;
             case 'G':
                 gym_ptrs.emplace_back(new PokemonGym(10, 1, 2, 3, id, Point2D(x,y)));
-                object_ptrs.push_back(gym_ptrs.back());
-                active_ptrs.push_back(center_ptrs.back());
+                object_ptrs.emplace_back(gym_ptrs.back());
+                active_ptrs.emplace_back(gym_ptrs.back());
                 break;
             case 'W':
                 wildpokemon_ptrs.emplace_back(new WildPokemon(id, Point2D(x,y)));
                 object_ptrs.emplace_back(wildpokemon_ptrs.back());
-                active_ptrs.push_back(center_ptrs.back());
+                active_ptrs.push_back(wildpokemon_ptrs.back());
                 break;
         }
 }
@@ -151,14 +151,18 @@ bool Model::Update() {
     bool hasTrue = false; //checks if at least one update returns true
     bool gymsDefeated = true; 
     bool allDead = true; 
-    int i = 0;
     time++;
     for(game_object_iter = active_ptrs.begin();game_object_iter != active_ptrs.end();game_object_iter++) {
         if((*game_object_iter)->GetDisplayCode() == 'T') { //trainers
             if((*game_object_iter)->Update())
                 hasTrue = true;
-            if((*game_object_iter)->GetState() != FAINTED) { //checks if at least one trainer is alive
-                allDead = false;
+            if((*game_object_iter)->GetState() != FAINTED) { //checks trainer is alive
+                allDead = false; //if at least one trainer is alive, all dead will be false
+            }
+            else {
+                game_object_iter = active_ptrs.erase(game_object_iter); //if the current trainer is dead, they are removed from active_ptrs. 
+                game_object_iter--;
+                cout << "Dead trainer removed" << endl;
             }
         }
         else if((*game_object_iter)->GetDisplayCode() == 'G') { //gyms
@@ -168,20 +172,27 @@ bool Model::Update() {
                 gymsDefeated = false;
             }
         }
+        else if((*game_object_iter)->GetDisplayCode() == 'W') {
+            (*game_object_iter)->Update();
+            if((*game_object_iter)->GetState() == DEAD) { //removes dead pokemon from active ptrs.
+                game_object_iter = active_ptrs.erase(game_object_iter);
+                game_object_iter--;
+                cout << "Dead pokemon removed";
+            }
+        }
         else {
             if((*game_object_iter)->Update()) {
                 hasTrue = true;
             }   
         } 
-        i++;
     }
-    for(pokemon_iter = wildpokemon_ptrs.begin();pokemon_iter != wildpokemon_ptrs.end();pokemon_iter++) {
-        for(trainer_iter = trainer_ptrs.begin();trainer_iter != trainer_ptrs.end();trainer_iter++) {
-            if(GetDistanceBetween((*pokemon_iter)->GetLocation(),(*trainer_iter)->GetLocation()) <= (*pokemon_iter) -> GetProximity()) {
-                (*pokemon_iter) -> follow((*trainer_iter));
-            }
-        }
-    }
+    // for(pokemon_iter = wildpokemon_ptrs.begin();pokemon_iter != wildpokemon_ptrs.end();pokemon_iter++) {
+    //     for(trainer_iter = trainer_ptrs.begin();trainer_iter != trainer_ptrs.end();trainer_iter++) {
+    //         if(GetDistanceBetween((*pokemon_iter)->GetLocation(),(*trainer_iter)->GetLocation()) <= (*pokemon_iter) -> GetProximity()) {
+    //             (*pokemon_iter) -> follow((*trainer_iter));
+    //         }
+    //     }
+    // }
     if(gymsDefeated) {
         cout << "GAME OVER: You win! All battles done!" << endl;
         exit(EXIT_SUCCESS);
@@ -190,14 +201,13 @@ bool Model::Update() {
         cout << "GAME OVER: You lose! All of you Trainers' pokemon have fainted!" << endl;
         exit(EXIT_FAILURE);
     }
-    
     return hasTrue;
 }
 
 void Model::Display(View& view) {
     view.Clear(); //defaults the grid
-    for(game_object_iter = object_ptrs.begin();game_object_iter != object_ptrs.end();game_object_iter++) { //kept getting seg fault with this. has someting to do with ash dying. dont have time to fix.
-        view.Plot(*(game_object_iter));
+    for(game_object_iter = active_ptrs.begin();game_object_iter != active_ptrs.end();game_object_iter++) { 
+        view.Plot(*(game_object_iter)); //plots all active_ptrs
     }
     // for(int i = 1;i < 3;i++) { //replots GameObjects
     //     view.Plot(this->GetPokemonCenterPtr(i));

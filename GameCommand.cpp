@@ -59,7 +59,6 @@ void DoRecoverInCenterCommand(Model& model, int trainer_id, unsigned int potions
 
 void DoAdvanceCommand(Model& model, View& view) { 
     cout << "Advancing one tick." << endl;
-    model.AddTime();
     model.Update();
     model.ShowStatus();
     model.Display(view);
@@ -69,49 +68,53 @@ void DoRunCommand(Model& model, View& view) {
     cout << "Advancing to next event." << endl;
     int counter = 0;
     while(counter < 5 && !model.Update()) {
-        // model.AddTime();
         counter++;
     }
-    // if(counter < 5) { //model.Update() can return false, breaking the while. 
-    //     model.AddTime(); //When this happens, the inside is skipped even though update is run, meaning time must be added
-    // }
     model.ShowStatus();
     model.Display(view); // reprints grid
 }
 
 void DoCreateNewObject(Model& model, char type, int id, double x, double y) {
-    
+    model.NewObject(type, id, x, y);
 }
 
 bool DoPlayGame(Model& model, View& view) { //custom function. loops in main and prompts and calls function.
+    cout << "Enter the game command: ";
+    cin.clear();    
     char com, type;
     int id, e1, e2;
     double x, y;
-    cout << "Enter the game command: ";
-    cin >> com; //might need a try catch for this?
+    
+    //cin >> com;
+    
     try {
+        
+        if(!(cin >> com)) {//might need a try catch for this?
+            throw Invalid_Input("Was expecting a char");
+        }
         com = tolower(com);
         switch (com) {
             case 'n':
                 if(!(cin >> type)) {
                     throw Invalid_Input("Was expecting a character");
                 }
-                if(!(cin >> id)) {
+                else if(!(cin >> id)) {
                     throw Invalid_Input("Was expecting an integer");
                 }
-                if(!(cin >> x >> y)) {
+                else if(!(cin >> x >> y)) {
                     throw Invalid_Input("Was expecting a double");
                 }
                 DoCreateNewObject(model, type, id, x, y);
                 break;
             case 'm': 
-                if(!(cin >> id >> x >> y)) {
+                if(!(cin >> id)) {
                     throw Invalid_Input("Was expecting an integer");
                 }
                 if(!(cin >> x >> y)) {
                     throw Invalid_Input("Was expecting an double");
                 }
                 DoMoveCommand(model, id, Point2D(x, y));
+                //return true;
                 break;
             case 'c':
                 if(!(cin >> id >> e1)) {
@@ -155,9 +158,11 @@ bool DoPlayGame(Model& model, View& view) { //custom function. loops in main and
         }
     }
     catch(Invalid_Input& except) {
+        cin.clear();
+        cin.ignore(10000, '\n');
         cout << "Invalid Input - " << except.msg_ptr << endl;
     }
-    
+
     return true;
 }
 

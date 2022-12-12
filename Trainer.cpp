@@ -53,6 +53,22 @@ void Trainer::StartMoving(Point2D dest) {
     }
 }
 
+double Trainer::getHealth() {
+    return this->health;
+}
+
+void Trainer::loseHealth(double d) {
+    health -= d;
+}
+
+void Trainer::addExperience() {
+    this->experience += 5;
+}
+
+double Trainer::GetExperience() {
+    return experience;
+}
+
 void Trainer::StartMovingToGym(PokemonGym* gym) { //pretty much same as StartMoving, except HasFainted() needs to be first
     if(HasFainted()) { //Dead trainers can only move to points
         cout << display_code << id_num << ": My Pokemon have fainted so I can't move to gym..." << endl;
@@ -159,8 +175,9 @@ bool Trainer::ShouldBeVisible() {
     if(HasFainted()) 
         return false;
     return true;
-    
 }
+
+
 
 void Trainer::ShowStatus() {
     cout <<  name << " status: " << endl;

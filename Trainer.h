@@ -40,15 +40,20 @@ class Trainer: public GameObject{
     bool ShouldBeVisible();
     void ShowStatus();
     bool Update();
+    void addExperience();
+    void loseHealth(double);
     PokemonGym GetCurrentGym();
+    double GetExperience();
+    double getHealth();
     protected:
     bool UpdateLocation();
     void SetupDestination(Point2D);
     private:
+    double damage;
     double speed;
     bool is_at_center;
     bool is_IN_GYM;
-    unsigned int health = 20;
+    unsigned int health = 1;
     unsigned int experience = 0;
     double PokeDollars = 0.0;
     unsigned int battles_to_buy = 0;

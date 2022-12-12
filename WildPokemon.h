@@ -2,7 +2,7 @@
 #define WILDPOKEMON_H
 #include "GameObject.h"
 #include "Trainer.h"
-#include <string>
+
 
 enum WildPokemonStates {
     IN_ENVIRONMENT = 0,
@@ -22,11 +22,13 @@ class WildPokemon: public GameObject {
     Point2D destination;
     Vector2D delta;
     string name;
-    Trainer* current_trainer;
+    Trainer* current_trainer = 0;
     public:
     WildPokemon(unsigned int id, Point2D);
     WildPokemon(string, double, double, bool, int, Point2D);
+    void AttackTrainer(Trainer* t);
     void follow(Trainer* t);
+    bool takeDamage(double);
     bool get_variant();
     double get_attack();
     double get_health();
