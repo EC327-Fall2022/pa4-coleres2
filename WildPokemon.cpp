@@ -27,9 +27,11 @@ bool WildPokemon::takeDamage(double damage) {
 }
 
 void WildPokemon::follow(Trainer* t) { //need to update trainer information aswell
-    current_trainer = t;
-    state = IN_TRAINER;
-    cout << this->display_code << this->id_num << " (" << this->name << ") is following " << t->GetDisplayCode() << t->GetId() << " (" << t->GetName() << ")";
+    if(state != DEAD) {
+        current_trainer = t;
+        state = IN_TRAINER;
+        cout << this->display_code << this->id_num << " (" << this->name << ") is following " << t->GetDisplayCode() << t->GetId() << " (" << t->GetName() << ")";
+    }
 }
 bool WildPokemon::get_variant() {
     return variant; 
@@ -131,9 +133,11 @@ void WildPokemon::ShowStatus() {
         break;
     case DEAD:
         cout <<"The WildPokemon is dead" << endl;
+        break;
     case IN_TRAINER:
         cout << "The WildPokemon is following " << current_trainer->GetName() << endl;
         cout << " has " << health << " health" << endl;
+        break;
     default:
         break;
     }

@@ -226,7 +226,7 @@ bool Model::Update() {
             if((*game_object_iter)->GetState() == DEAD) { //removes dead pokemon from active ptrs.
                 game_object_iter = active_ptrs.erase(game_object_iter);
                 game_object_iter--;
-                cout << "Dead pokemon removed";
+                cout << "Dead pokemon removed" << endl;
             }
         }
         else {
@@ -235,13 +235,13 @@ bool Model::Update() {
             }   
         } 
     }
-    // for(pokemon_iter = wildpokemon_ptrs.begin();pokemon_iter != wildpokemon_ptrs.end();pokemon_iter++) {
-    //     for(trainer_iter = trainer_ptrs.begin();trainer_iter != trainer_ptrs.end();trainer_iter++) {
-    //         if(GetDistanceBetween((*pokemon_iter)->GetLocation(),(*trainer_iter)->GetLocation()) <= (*pokemon_iter) -> GetProximity()) {
-    //             (*pokemon_iter) -> follow((*trainer_iter));
-    //         }
-    //     }
-    // }
+    for(pokemon_iter = wildpokemon_ptrs.begin();pokemon_iter != wildpokemon_ptrs.end();pokemon_iter++) {
+        for(trainer_iter = trainer_ptrs.begin();trainer_iter != trainer_ptrs.end();trainer_iter++) {
+            if(GetDistanceBetween((*pokemon_iter)->GetLocation(),(*trainer_iter)->GetLocation()) <= (*pokemon_iter) -> GetProximity() && (((*pokemon_iter)->GetState() == IN_ENVIRONMENT) || (*pokemon_iter)->GetState() == IN_TRAINER)) {
+                (*pokemon_iter) -> follow((*trainer_iter));
+            }
+        }
+    }
     if(gymsDefeated) {
         cout << "GAME OVER: You win! All battles done!" << endl;
         exit(EXIT_SUCCESS);
