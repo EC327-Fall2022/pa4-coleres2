@@ -53,7 +53,7 @@ class Trainer: public GameObject{
     double speed;
     bool is_at_center;
     bool is_IN_GYM;
-    unsigned int health = 1;
+    unsigned int health = 20;
     unsigned int experience = 0;
     double PokeDollars = 0.0;
     unsigned int battles_to_buy = 0;

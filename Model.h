@@ -7,6 +7,7 @@
 #include "View.h"
 #include "WildPokemon.h"
 #include <list>
+#include "Input_Handling.h"
 
 class Model {
     private:
